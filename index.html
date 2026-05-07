@@ -1066,7 +1066,16 @@ ctx.fillRect(matX, matY, 20, matHeight);
 ctx.fillStyle = currentConfig.textColor;
 ctx.textAlign = 'center';
 ctx.font = `${currentConfig.fontSize}px ${currentConfig.fontFamily}`;
-ctx.letterSpacing = `${currentConfig.letterSpacing}px`; // Use built-in letterSpacing
+const letterSpacingPx = currentConfig.letterSpacing;
+
+if (currentConfig.artistName) {
+    drawTextWithLetterSpacing(ctx, currentConfig.artistName, sigX, sigY, letterSpacingPx);
+}
+
+if (currentConfig.websiteUrl) {
+    const urlY = currentConfig.artistName ? sigY + currentConfig.fontSize + 10 : sigY;
+    drawTextWithLetterSpacing(ctx, currentConfig.websiteUrl, sigX, urlY, letterSpacingPx);
+}
 
 if (currentConfig.artistName) {
     ctx.fillText(currentConfig.artistName, sigX, sigY);
