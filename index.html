@@ -1070,37 +1070,7 @@ ctx.fillRect(matX, matY, 20, matHeight);
                 const letterSpacingPx = currentConfig.letterSpacing;
                 
                 if (currentConfig.artistName) {
-                   function drawTextWithLetterSpacing(ctx, text, x, y, spacing) {
-    if (spacing === 0) {
-        // No letter spacing - use normal rendering
-        ctx.fillText(text, x, y);
-        return;
-    }
-    
-    const chars = text.split('');
-    
-    // Calculate total width (don't add spacing to spaces)
-    let totalWidth = 0;
-    chars.forEach(char => {
-        const charWidth = ctx.measureText(char).width;
-        totalWidth += charWidth;
-        if (char !== ' ') {
-            totalWidth += spacing;
-        }
-    });
-    totalWidth -= spacing; // Remove extra spacing from last char
-    
-    let currentX = x - totalWidth / 2;
-    
-    chars.forEach(char => {
-        ctx.fillText(char, currentX, y);
-        const charWidth = ctx.measureText(char).width;
-        currentX += charWidth;
-        if (char !== ' ') {
-            currentX += spacing;
-        }
-    });
-}
+                    drawTextWithLetterSpacing(ctx, currentConfig.artistName, sigX, sigY, letterSpacingPx);
                 }
 
                 if (currentConfig.websiteUrl) {
