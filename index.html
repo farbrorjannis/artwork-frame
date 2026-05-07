@@ -1004,7 +1004,7 @@
             // Highlight (lighter) on top and left
             const highlightColor = `rgb(${Math.min(255, r + 40)}, ${Math.min(255, g + 40)}, ${Math.min(255, b + 40)})`;
             ctx.strokeStyle = highlightColor;
-            ctx.lineWidth = frameW * 0.15;
+            ctx.lineWidth = frameW * 0.25;
             ctx.beginPath();
             ctx.moveTo(frameX, frameY + frameHeight);
             ctx.lineTo(frameX, frameY);
@@ -1014,7 +1014,7 @@
             // Shadow (darker) on bottom and right
             const shadowColor = `rgb(${Math.max(0, r - 40)}, ${Math.max(0, g - 40)}, ${Math.max(0, b - 40)})`;
             ctx.strokeStyle = shadowColor;
-            ctx.lineWidth = frameW * 0.15;
+            ctx.lineWidth = frameW * 0.25;
             ctx.beginPath();
             ctx.moveTo(frameX + frameWidth, frameY);
             ctx.lineTo(frameX + frameWidth, frameY + frameHeight);
