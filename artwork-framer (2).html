@@ -1,0 +1,1120 @@
+<!DOCTYPE html>
+<html lang="sv">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artwork Framer - Frame Your Artwork</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+            background: #f5f1ed;
+            color: #5a4a3a;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            padding: 30px 0;
+            border-bottom: 1px solid #d4c4b0;
+            margin-bottom: 40px;
+        }
+
+        h1 {
+            font-size: 28px;
+            font-weight: 300;
+            color: #5a4a3a;
+            margin-bottom: 10px;
+        }
+
+        .tagline {
+            font-size: 14px;
+            color: #9a8a7a;
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+            margin-bottom: 40px;
+        }
+
+        @media (max-width: 968px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* Upload Area */
+        .upload-section {
+            background: white;
+            border: 2px dashed #d4c4b0;
+            border-radius: 8px;
+            padding: 60px 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            min-height: 400px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .upload-section:hover {
+            border-color: #b4a490;
+            background: #fafaf8;
+        }
+
+        .upload-section.dragover {
+            border-color: #8a7a6a;
+            background: #f0ebe5;
+        }
+
+        .upload-icon {
+            width: 50px;
+            height: 50px;
+            background: #e8dfd5;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 20px;
+        }
+
+        .upload-icon svg {
+            width: 24px;
+            height: 24px;
+            stroke: #8a7a6a;
+        }
+
+        .upload-section h2 {
+            font-size: 18px;
+            font-weight: 400;
+            margin-bottom: 8px;
+            color: #5a4a3a;
+        }
+
+        .upload-section p {
+            font-size: 14px;
+            color: #9a8a7a;
+            margin-bottom: 20px;
+        }
+
+        .file-types {
+            font-size: 12px;
+            color: #b4a490;
+        }
+
+        #fileInput {
+            display: none;
+        }
+
+        /* Preview Area */
+        .preview-section {
+            background: #3a3a3a;
+            border-radius: 8px;
+            padding: 40px;
+            min-height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+        }
+
+        #previewCanvas {
+            max-width: 100%;
+            height: auto;
+            display: block;
+        }
+
+        .preview-placeholder {
+            color: #8a8a8a;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /* Controls Section */
+        .controls-section {
+            background: white;
+            border-radius: 8px;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        .control-group {
+            border-bottom: 1px solid #e8dfd5;
+        }
+
+        .control-group:last-child {
+            border-bottom: none;
+        }
+
+        .control-header {
+            padding: 20px 30px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: white;
+            transition: background 0.2s;
+            user-select: none;
+        }
+
+        .control-header:hover {
+            background: #fafaf8;
+        }
+
+        .control-header h3 {
+            font-size: 16px;
+            font-weight: 500;
+            color: #5a4a3a;
+        }
+
+        .control-header .arrow {
+            transition: transform 0.3s;
+            color: #9a8a7a;
+        }
+
+        .control-header .arrow.open {
+            transform: rotate(180deg);
+        }
+
+        .control-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+
+        .control-content.open {
+            max-height: 800px;
+        }
+
+        .control-inner {
+            padding: 0 30px 30px 30px;
+        }
+
+        /* Form Controls */
+        .form-row {
+            margin-bottom: 20px;
+        }
+
+        .form-row:last-child {
+            margin-bottom: 0;
+        }
+
+        label {
+            display: block;
+            font-size: 13px;
+            color: #7a6a5a;
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 500;
+        }
+
+        input[type="text"],
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #d4c4b0;
+            border-radius: 4px;
+            font-size: 14px;
+            color: #5a4a3a;
+            background: white;
+            transition: border-color 0.2s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus,
+        select:focus {
+            outline: none;
+            border-color: #8a7a6a;
+        }
+
+        /* Color Picker */
+        .color-picker-row {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .color-input-wrapper {
+            flex: 1;
+            position: relative;
+        }
+
+        input[type="color"] {
+            width: 100%;
+            height: 45px;
+            border: 1px solid #d4c4b0;
+            border-radius: 4px;
+            cursor: pointer;
+            background: white;
+        }
+
+        input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 4px;
+        }
+
+        input[type="color"]::-webkit-color-swatch {
+            border: none;
+            border-radius: 2px;
+        }
+
+        /* Slider */
+        .slider-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .slider-wrapper {
+            flex: 1;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 6px;
+            border-radius: 3px;
+            background: #e8dfd5;
+            outline: none;
+            -webkit-appearance: none;
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #5a4a3a;
+            cursor: pointer;
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #5a4a3a;
+            cursor: pointer;
+            border: none;
+        }
+
+        .slider-value {
+            min-width: 50px;
+            text-align: right;
+            font-size: 14px;
+            color: #5a4a3a;
+            font-weight: 500;
+        }
+
+        /* Buttons */
+        .btn {
+            padding: 14px 28px;
+            border: none;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .btn-primary {
+            background: #5a4a3a;
+            color: white;
+            width: 100%;
+        }
+
+        .btn-primary:hover {
+            background: #4a3a2a;
+        }
+
+        .btn-secondary {
+            background: #e8dfd5;
+            color: #5a4a3a;
+            width: 100%;
+        }
+
+        .btn-secondary:hover {
+            background: #d4c4b0;
+        }
+
+        /* Shadow Options */
+        .shadow-options {
+            display: flex;
+            gap: 10px;
+        }
+
+        .shadow-btn {
+            flex: 1;
+            padding: 10px;
+            border: 2px solid #d4c4b0;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 13px;
+            color: #5a4a3a;
+            transition: all 0.2s;
+        }
+
+        .shadow-btn.active {
+            border-color: #5a4a3a;
+            background: #5a4a3a;
+            color: white;
+        }
+
+        .shadow-btn:hover {
+            border-color: #8a7a6a;
+        }
+
+        /* Warning */
+        .warning {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 4px;
+            padding: 12px 16px;
+            margin-top: 20px;
+            font-size: 13px;
+            color: #856404;
+            display: none;
+        }
+
+        .warning.show {
+            display: block;
+        }
+
+        /* Export Section */
+        .export-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .export-section.show {
+            display: block;
+        }
+
+        .image-uploaded .upload-section {
+            min-height: auto;
+            padding: 30px;
+            border-style: solid;
+        }
+
+        .image-uploaded .upload-icon {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Frame your artwork</h1>
+            <p class="tagline">Instantly create gallery-ready mockups for social sharing</p>
+        </header>
+
+        <div class="main-content">
+            <!-- Left Column: Upload & Controls -->
+            <div class="left-column">
+                <div class="upload-section" id="uploadArea">
+                    <div class="upload-icon">
+                        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"></path>
+                        </svg>
+                    </div>
+                    <h2>Upload your artwork</h2>
+                    <p>or click to browse</p>
+                    <span class="file-types">JPG · PNG · WEBP · GIF</span>
+                    <input type="file" id="fileInput" accept="image/*">
+                </div>
+
+                <div class="controls-section" style="margin-top: 30px;">
+                    <!-- Auto Colors -->
+                    <div class="control-group">
+                        <div class="control-header">
+                            <h3>Auto Harmonious Colors</h3>
+                        </div>
+                        <div class="control-inner" style="padding: 20px 30px;">
+                            <button class="btn btn-secondary" id="autoColorBtn">
+                                Generate Harmonious Colors
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Frame Material -->
+                    <div class="control-group">
+                        <div class="control-header" data-toggle="frame">
+                            <h3>Frame</h3>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div class="control-content">
+                            <div class="control-inner">
+                                <div class="form-row">
+                                    <label>Frame Color</label>
+                                    <div class="color-picker-row">
+                                        <div class="color-input-wrapper">
+                                            <input type="color" id="frameColor" value="#c4a574">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <label>Frame Width (px)</label>
+                                    <div class="slider-row">
+                                        <div class="slider-wrapper">
+                                            <input type="range" id="frameWidth" min="5" max="200" value="40">
+                                        </div>
+                                        <span class="slider-value" id="frameWidthValue">40</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Mat -->
+                    <div class="control-group">
+                        <div class="control-header" data-toggle="mat">
+                            <h3>Mat (Passepartout)</h3>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div class="control-content">
+                            <div class="control-inner">
+                                <div class="form-row">
+                                    <label>Mat Color</label>
+                                    <div class="color-picker-row">
+                                        <div class="color-input-wrapper">
+                                            <input type="color" id="matColor" value="#f5f1ed">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <label>Width (px)</label>
+                                    <div class="slider-row">
+                                        <div class="slider-wrapper">
+                                            <input type="range" id="matWidth" min="0" max="200" value="60">
+                                        </div>
+                                        <span class="slider-value" id="matWidthValue">60</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Shadow -->
+                    <div class="control-group">
+                        <div class="control-header" data-toggle="shadow">
+                            <h3>Shadow</h3>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div class="control-content">
+                            <div class="control-inner">
+                                <div class="form-row">
+                                    <label>Shadow Intensity</label>
+                                    <div class="shadow-options">
+                                        <button class="shadow-btn" data-shadow="light">Light</button>
+                                        <button class="shadow-btn" data-shadow="medium">Medium</button>
+                                        <button class="shadow-btn active" data-shadow="strong">Strong</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Signature -->
+                    <div class="control-group">
+                        <div class="control-header" data-toggle="signature">
+                            <h3>Signature</h3>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div class="control-content">
+                            <div class="control-inner">
+                                <div class="form-row">
+                                    <label>Artist Name</label>
+                                    <input type="text" id="artistName" placeholder="e.g. Jannis Politidis">
+                                </div>
+                                <div class="form-row">
+                                    <label>Website URL</label>
+                                    <input type="text" id="websiteUrl" placeholder="e.g. www.akvarellskiss.se">
+                                </div>
+                                <div class="form-row">
+                                    <label>Font Family</label>
+                                    <select id="fontFamily">
+                                        <option value="'Arial', sans-serif">Arial</option>
+                                        <option value="'Helvetica Neue', sans-serif">Helvetica</option>
+                                        <option value="'Verdana', sans-serif">Verdana</option>
+                                        <option value="'Open Sans', sans-serif">Open Sans</option>
+                                        <option value="'Georgia', serif" selected>Georgia</option>
+                                    </select>
+                                </div>
+                                <div class="form-row">
+                                    <label>Text Color</label>
+                                    <div class="color-picker-row">
+                                        <div class="color-input-wrapper">
+                                            <input type="color" id="textColor" value="#5a4a3a">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <label>Font Size</label>
+                                    <div class="slider-row">
+                                        <div class="slider-wrapper">
+                                            <input type="range" id="fontSize" min="12" max="50" value="18">
+                                        </div>
+                                        <span class="slider-value" id="fontSizeValue">18</span>
+                                    </div>
+                                </div>
+                                <div class="form-row">
+                                    <label>Letter Spacing</label>
+                                    <div class="slider-row">
+                                        <div class="slider-wrapper">
+                                            <input type="range" id="letterSpacing" min="0" max="20" value="2" step="0.5">
+                                        </div>
+                                        <span class="slider-value" id="letterSpacingValue">2</span>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Wall Background -->
+                    <div class="control-group">
+                        <div class="control-header" data-toggle="wall">
+                            <h3>Wall Color</h3>
+                            <span class="arrow">▼</span>
+                        </div>
+                        <div class="control-content">
+                            <div class="control-inner">
+                                <div class="form-row">
+                                    <label>Background Color</label>
+                                    <div class="color-picker-row">
+                                        <div class="color-input-wrapper">
+                                            <input type="color" id="wallColor" value="#3a3a3a">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="export-section" id="exportSection">
+                    <button class="btn btn-primary" id="downloadBtn">
+                        Download JPG
+                    </button>
+                    <div class="warning" id="warningBox"></div>
+                </div>
+            </div>
+
+            <!-- Right Column: Preview -->
+            <div class="preview-section" id="previewSection">
+                <canvas id="previewCanvas"></canvas>
+                <div class="preview-placeholder" id="previewPlaceholder">
+                    Preview will appear here when you upload an image
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State
+        let uploadedImage = null;
+        let scaledImage = null; // Store the scaled version
+        let currentConfig = {
+            frameColor: '#c4a574',
+            frameWidth: 40,
+            matColor: '#f5f1ed',
+            matWidth: 60,
+            shadowIntensity: 'strong',
+            wallColor: '#3a3a3a',
+            artistName: '',
+            websiteUrl: '',
+            fontFamily: "'Georgia', serif",
+            fontSize: 18,
+            letterSpacing: 2,
+            textColor: '#5a4a3a'
+        };
+
+        // Elements
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const previewCanvas = document.getElementById('previewCanvas');
+        const previewPlaceholder = document.getElementById('previewPlaceholder');
+        const previewSection = document.getElementById('previewSection');
+        const exportSection = document.getElementById('exportSection');
+        const warningBox = document.getElementById('warningBox');
+        const ctx = previewCanvas.getContext('2d');
+
+        // Upload handlers
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                loadImage(file);
+            }
+        });
+
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                loadImage(file);
+            }
+        });
+
+        function loadImage(file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    uploadedImage = img;
+                    
+                    // Scale down if larger than 1500px on longest side
+                    const maxDimension = 1500;
+                    const longestSide = Math.max(img.width, img.height);
+                    
+                    if (longestSide > maxDimension) {
+                        const scale = maxDimension / longestSide;
+                        const scaledCanvas = document.createElement('canvas');
+                        scaledCanvas.width = Math.round(img.width * scale);
+                        scaledCanvas.height = Math.round(img.height * scale);
+                        const scaledCtx = scaledCanvas.getContext('2d');
+                        scaledCtx.drawImage(img, 0, 0, scaledCanvas.width, scaledCanvas.height);
+                        
+                        // Create scaled image
+                        const scaledImg = new Image();
+                        scaledImg.onload = () => {
+                            scaledImage = scaledImg;
+                            document.body.classList.add('image-uploaded');
+                            previewPlaceholder.style.display = 'none';
+                            exportSection.classList.add('show');
+                            renderPreview();
+                        };
+                        scaledImg.src = scaledCanvas.toDataURL();
+                    } else {
+                        scaledImage = img;
+                        document.body.classList.add('image-uploaded');
+                        previewPlaceholder.style.display = 'none';
+                        exportSection.classList.add('show');
+                        renderPreview();
+                    }
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+
+        // Accordion functionality
+        document.querySelectorAll('.control-header[data-toggle]').forEach(header => {
+            header.addEventListener('click', () => {
+                const content = header.nextElementSibling;
+                const arrow = header.querySelector('.arrow');
+                
+                content.classList.toggle('open');
+                arrow.classList.toggle('open');
+            });
+        });
+
+        // Color inputs
+        document.getElementById('frameColor').addEventListener('input', (e) => {
+            currentConfig.frameColor = e.target.value;
+            renderPreview();
+        });
+
+        document.getElementById('matColor').addEventListener('input', (e) => {
+            currentConfig.matColor = e.target.value;
+            renderPreview();
+        });
+
+        document.getElementById('wallColor').addEventListener('input', (e) => {
+            currentConfig.wallColor = e.target.value;
+            previewSection.style.background = e.target.value;
+            autoAdjustTextColor();
+            renderPreview();
+        });
+
+        document.getElementById('textColor').addEventListener('input', (e) => {
+            currentConfig.textColor = e.target.value;
+            renderPreview();
+        });
+
+        // Sliders
+        document.getElementById('frameWidth').addEventListener('input', (e) => {
+            currentConfig.frameWidth = parseInt(e.target.value);
+            document.getElementById('frameWidthValue').textContent = e.target.value;
+            renderPreview();
+        });
+
+        document.getElementById('matWidth').addEventListener('input', (e) => {
+            currentConfig.matWidth = parseInt(e.target.value);
+            document.getElementById('matWidthValue').textContent = e.target.value;
+            renderPreview();
+        });
+
+        document.getElementById('fontSize').addEventListener('input', (e) => {
+            currentConfig.fontSize = parseInt(e.target.value);
+            document.getElementById('fontSizeValue').textContent = e.target.value;
+            renderPreview();
+        });
+
+        document.getElementById('letterSpacing').addEventListener('input', (e) => {
+            currentConfig.letterSpacing = parseFloat(e.target.value);
+            document.getElementById('letterSpacingValue').textContent = e.target.value;
+            renderPreview();
+        });
+
+        // Text inputs
+        document.getElementById('artistName').addEventListener('input', (e) => {
+            currentConfig.artistName = e.target.value;
+            renderPreview();
+        });
+
+        document.getElementById('websiteUrl').addEventListener('input', (e) => {
+            currentConfig.websiteUrl = e.target.value;
+            renderPreview();
+        });
+
+        document.getElementById('fontFamily').addEventListener('change', (e) => {
+            currentConfig.fontFamily = e.target.value;
+            renderPreview();
+        });
+
+        // Shadow buttons
+        document.querySelectorAll('.shadow-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.shadow-btn').forEach(b => b.classList.remove('active'));
+                btn.classList.add('active');
+                currentConfig.shadowIntensity = btn.dataset.shadow;
+                renderPreview();
+            });
+        });
+
+        // Auto color button
+        document.getElementById('autoColorBtn').addEventListener('click', () => {
+            if (!uploadedImage) return;
+            generateHarmoniousColors();
+        });
+
+        function generateHarmoniousColors() {
+            // Create temporary canvas to sample colors
+            const tempCanvas = document.createElement('canvas');
+            const tempCtx = tempCanvas.getContext('2d');
+            tempCanvas.width = uploadedImage.width;
+            tempCanvas.height = uploadedImage.height;
+            tempCtx.drawImage(uploadedImage, 0, 0);
+
+            // Sample colors from image
+            const imageData = tempCtx.getImageData(0, 0, tempCanvas.width, tempCanvas.height);
+            const colors = [];
+            const step = 10;
+
+            for (let i = 0; i < imageData.data.length; i += step * 4) {
+                colors.push({
+                    r: imageData.data[i],
+                    g: imageData.data[i + 1],
+                    b: imageData.data[i + 2]
+                });
+            }
+
+            // Calculate average color
+            const avgColor = {
+                r: Math.round(colors.reduce((sum, c) => sum + c.r, 0) / colors.length),
+                g: Math.round(colors.reduce((sum, c) => sum + c.g, 0) / colors.length),
+                b: Math.round(colors.reduce((sum, c) => sum + c.b, 0) / colors.length)
+            };
+
+            // Find dominant color (most saturated)
+            let dominantColor = avgColor;
+            let maxSaturation = 0;
+            
+            colors.forEach(color => {
+                const saturation = Math.max(color.r, color.g, color.b) - Math.min(color.r, color.g, color.b);
+                if (saturation > maxSaturation) {
+                    maxSaturation = saturation;
+                    dominantColor = color;
+                }
+            });
+
+            // Generate harmonious palette
+            // Mat: Lighter, desaturated version of average
+            const matColor = lightenColor(avgColor, 0.9);
+            document.getElementById('matColor').value = rgbToHex(matColor);
+            currentConfig.matColor = rgbToHex(matColor);
+
+            // Frame: Warmer version of dominant color
+            const frameColor = adjustTemperature(dominantColor, 20);
+            document.getElementById('frameColor').value = rgbToHex(frameColor);
+            currentConfig.frameColor = rgbToHex(frameColor);
+
+            // Wall: Complementary to average, darkened
+            const wallColor = getComplementary(avgColor);
+            const darkWall = darkenColor(wallColor, 0.3);
+            document.getElementById('wallColor').value = rgbToHex(darkWall);
+            currentConfig.wallColor = rgbToHex(darkWall);
+            previewSection.style.background = rgbToHex(darkWall);
+
+            // Auto-adjust text color based on wall brightness
+            autoAdjustTextColor();
+
+            renderPreview();
+        }
+
+        function autoAdjustTextColor() {
+            const wallHex = currentConfig.wallColor;
+            const r = parseInt(wallHex.substr(1, 2), 16);
+            const g = parseInt(wallHex.substr(3, 2), 16);
+            const b = parseInt(wallHex.substr(5, 2), 16);
+            const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+
+            const textColor = brightness > 128 ? '#2a2a2a' : '#f5f1ed';
+            document.getElementById('textColor').value = textColor;
+            currentConfig.textColor = textColor;
+        }
+
+        function lightenColor(color, amount) {
+            return {
+                r: Math.min(255, Math.round(color.r + (255 - color.r) * amount)),
+                g: Math.min(255, Math.round(color.g + (255 - color.g) * amount)),
+                b: Math.min(255, Math.round(color.b + (255 - color.b) * amount))
+            };
+        }
+
+        function darkenColor(color, amount) {
+            return {
+                r: Math.round(color.r * (1 - amount)),
+                g: Math.round(color.g * (1 - amount)),
+                b: Math.round(color.b * (1 - amount))
+            };
+        }
+
+        function adjustTemperature(color, warmth) {
+            return {
+                r: Math.min(255, color.r + warmth),
+                g: color.g,
+                b: Math.max(0, color.b - warmth)
+            };
+        }
+
+        function getComplementary(color) {
+            return {
+                r: 255 - color.r,
+                g: 255 - color.g,
+                b: 255 - color.b
+            };
+        }
+
+        function rgbToHex(color) {
+            const toHex = (n) => {
+                const hex = Math.min(255, Math.max(0, n)).toString(16);
+                return hex.length === 1 ? '0' + hex : hex;
+            };
+            return '#' + toHex(color.r) + toHex(color.g) + toHex(color.b);
+        }
+
+        function renderPreview() {
+            if (!scaledImage) return;
+
+            const img = scaledImage;
+            const frameW = currentConfig.frameWidth;
+            const matW = currentConfig.matWidth;
+            
+            // Calculate shadow size based on intensity - STRONGER VALUES
+            let shadowBlur, shadowOffset;
+            switch (currentConfig.shadowIntensity) {
+                case 'light':
+                    shadowBlur = 30;
+                    shadowOffset = 10;
+                    break;
+                case 'medium':
+                    shadowBlur = 50;
+                    shadowOffset = 15;
+                    break;
+                case 'strong':
+                    shadowBlur = 80;
+                    shadowOffset = 25;
+                    break;
+            }
+
+            // Calculate canvas size with extra space for shadow
+            const shadowPadding = shadowBlur + shadowOffset + 20;
+            const totalWidth = img.width + (matW + frameW) * 2 + shadowPadding * 2;
+            const totalHeight = img.height + (matW + frameW) * 2 + shadowPadding * 2;
+            
+            // Signature space
+            const signatureHeight = currentConfig.artistName || currentConfig.websiteUrl ? 80 : 0;
+            
+            previewCanvas.width = totalWidth;
+            previewCanvas.height = totalHeight + signatureHeight;
+
+            // Fill entire canvas with wall color first
+            ctx.fillStyle = currentConfig.wallColor;
+            ctx.fillRect(0, 0, previewCanvas.width, previewCanvas.height);
+
+            // Draw shadow
+            const frameX = shadowPadding;
+            const frameY = shadowPadding;
+            const frameWidth = img.width + (matW + frameW) * 2;
+            const frameHeight = img.height + (matW + frameW) * 2;
+
+            ctx.shadowColor = 'rgba(0, 0, 0, 0.5)';
+            ctx.shadowBlur = shadowBlur;
+            ctx.shadowOffsetX = shadowOffset;
+            ctx.shadowOffsetY = shadowOffset;
+
+            // Draw frame with shadow and 3D effect
+            ctx.fillStyle = currentConfig.frameColor;
+            ctx.fillRect(frameX, frameY, frameWidth, frameHeight);
+
+            // Reset shadow for inner elements
+            ctx.shadowColor = 'transparent';
+            ctx.shadowBlur = 0;
+            ctx.shadowOffsetX = 0;
+            ctx.shadowOffsetY = 0;
+
+            // Add 3D effect to frame (highlight on top-left, shadow on bottom-right)
+            // Parse frame color to adjust brightness
+            const frameColor = currentConfig.frameColor;
+            const r = parseInt(frameColor.substr(1, 2), 16);
+            const g = parseInt(frameColor.substr(3, 2), 16);
+            const b = parseInt(frameColor.substr(5, 2), 16);
+            
+            // Highlight (lighter) on top and left
+            const highlightColor = `rgb(${Math.min(255, r + 40)}, ${Math.min(255, g + 40)}, ${Math.min(255, b + 40)})`;
+            ctx.strokeStyle = highlightColor;
+            ctx.lineWidth = frameW * 0.15;
+            ctx.beginPath();
+            ctx.moveTo(frameX, frameY + frameHeight);
+            ctx.lineTo(frameX, frameY);
+            ctx.lineTo(frameX + frameWidth, frameY);
+            ctx.stroke();
+            
+            // Shadow (darker) on bottom and right
+            const shadowColor = `rgb(${Math.max(0, r - 40)}, ${Math.max(0, g - 40)}, ${Math.max(0, b - 40)})`;
+            ctx.strokeStyle = shadowColor;
+            ctx.lineWidth = frameW * 0.15;
+            ctx.beginPath();
+            ctx.moveTo(frameX + frameWidth, frameY);
+            ctx.lineTo(frameX + frameWidth, frameY + frameHeight);
+            ctx.lineTo(frameX, frameY + frameHeight);
+            ctx.stroke();
+
+            // Draw mat (passepartout)
+            ctx.fillStyle = currentConfig.matColor;
+            ctx.fillRect(
+                frameX + frameW,
+                frameY + frameW,
+                frameWidth - frameW * 2,
+                frameHeight - frameW * 2
+            );
+
+            // Draw image
+            ctx.drawImage(
+                img,
+                frameX + frameW + matW,
+                frameY + frameW + matW,
+                img.width,
+                img.height
+            );
+
+            // Draw signature
+            if (currentConfig.artistName || currentConfig.websiteUrl) {
+                const sigY = frameY + frameHeight + 30;
+                const sigX = frameX + frameWidth / 2;
+
+                ctx.fillStyle = currentConfig.textColor;
+                ctx.textAlign = 'center';
+                ctx.font = `${currentConfig.fontSize}px ${currentConfig.fontFamily}`;
+
+                const letterSpacingPx = currentConfig.letterSpacing;
+                
+                if (currentConfig.artistName) {
+                    drawTextWithLetterSpacing(ctx, currentConfig.artistName, sigX, sigY, letterSpacingPx);
+                }
+
+                if (currentConfig.websiteUrl) {
+                    const urlY = currentConfig.artistName ? sigY + currentConfig.fontSize + 10 : sigY;
+                    drawTextWithLetterSpacing(ctx, currentConfig.websiteUrl, sigX, urlY, letterSpacingPx);
+                }
+            }
+
+            // Check for warnings
+            checkWarnings(frameW, matW);
+        }
+
+        function drawTextWithLetterSpacing(ctx, text, x, y, spacing) {
+            const chars = text.split('');
+            const totalWidth = chars.reduce((sum, char) => {
+                return sum + ctx.measureText(char).width + spacing;
+            }, -spacing);
+            
+            let currentX = x - totalWidth / 2;
+            
+            chars.forEach(char => {
+                ctx.fillText(char, currentX, y);
+                currentX += ctx.measureText(char).width + spacing;
+            });
+        }
+
+        function checkWarnings(frameW, matW) {
+            const warnings = [];
+
+            if (frameW < 10) {
+                warnings.push('⚠️ Frame is very narrow and may be difficult to see.');
+            }
+
+            if (matW < 20 && matW > 0) {
+                warnings.push('⚠️ Mat is very narrow.');
+            }
+
+            if (warnings.length > 0) {
+                warningBox.innerHTML = warnings.join('<br>');
+                warningBox.classList.add('show');
+            } else {
+                warningBox.classList.remove('show');
+            }
+        }
+
+        // Download
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            if (!scaledImage) return;
+
+            // The canvas already has the wall color as background from renderPreview
+            // Just export it directly
+            previewCanvas.toBlob((blob) => {
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = 'framed-artwork.jpg';
+                a.click();
+                URL.revokeObjectURL(url);
+            }, 'image/jpeg', 0.7);
+        });
+
+        // Initial state - open first accordion
+        document.querySelector('.control-header[data-toggle="frame"]').click();
+    </script>
+</body>
+</html>
