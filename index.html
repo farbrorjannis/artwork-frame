@@ -1083,19 +1083,25 @@ ctx.fillRect(matX, matY, 20, matHeight);
             checkWarnings(frameW, matW);
         }
 
-        function drawTextWithLetterSpacing(ctx, text, x, y, spacing) {
-            const chars = text.split('');
-            const totalWidth = chars.reduce((sum, char) => {
-                return sum + ctx.measureText(char).width + spacing;
-            }, -spacing);
-            
-            let currentX = x - totalWidth / 2;
-            
-            chars.forEach(char => {
-                ctx.fillText(char, currentX, y);
-                currentX += ctx.measureText(char).width + spacing;
-            });
-        }
+function drawTextWithLetterSpacing(ctx, text, x, y, spacing) {
+    const chars = text.split('');
+    
+    // Calculate total width (don't add spacing to spaces)
+    const totalWidth = chars.reduce((sum, char) => {
+        const charWidth = ctx.measureText(char).width;
+        const extraSpace = char === ' ' ? 0 : spacing; // No extra spacing for spaces
+        return sum + charWidth + extraSpace;
+    }, -spacing);
+    
+    let currentX = x - totalWidth / 2;
+    
+    chars.forEach(char => {
+        ctx.fillText(char, currentX, y);
+        const charWidth = ctx.measureText(char).width;
+        const extraSpace = char === ' ' ? 0 : spacing; // No extra spacing for spaces
+        currentX += charWidth + extraSpace;
+    });
+}
 
         function checkWarnings(frameW, matW) {
             const warnings = [];
