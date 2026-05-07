@@ -1041,7 +1041,7 @@
 
             // Draw signature
             if (currentConfig.artistName || currentConfig.websiteUrl) {
-                const sigY = frameY + frameHeight + 50;
+                const sigY = frameY + frameHeight + 80;
                 const sigX = frameX + frameWidth / 2;
 
                 ctx.fillStyle = currentConfig.textColor;
@@ -1055,7 +1055,7 @@
                 }
 
                 if (currentConfig.websiteUrl) {
-                    const urlY = currentConfig.artistName ? sigY + currentConfig.fontSize + 10 : sigY;
+                    const urlY = currentConfig.artistName ? sigY + currentConfig.fontSize + 30 : sigY;
                     drawTextWithLetterSpacing(ctx, currentConfig.websiteUrl, sigX, urlY, letterSpacingPx);
                 }
             }
