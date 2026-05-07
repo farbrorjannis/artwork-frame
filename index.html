@@ -642,8 +642,8 @@
             artistName: '',
             websiteUrl: '',
             fontFamily: "'Georgia', serif",
-            fontSize: 24,
-            letterSpacing: 0,
+            fontSize: 18,
+            letterSpacing: 2,
             textColor: '#5a4a3a'
         };
 
@@ -1063,43 +1063,39 @@ ctx.fillRect(matX, matY, 20, matHeight);
                 const sigY = frameY + frameHeight + 80;
                 const sigX = frameX + frameWidth / 2;
 
-ctx.fillStyle = currentConfig.textColor;
-ctx.textAlign = 'center';
-ctx.font = `${currentConfig.fontSize}px ${currentConfig.fontFamily}`;
-const letterSpacingPx = currentConfig.letterSpacing;
+                ctx.fillStyle = currentConfig.textColor;
+                ctx.textAlign = 'center';
+                ctx.font = `${currentConfig.fontSize}px ${currentConfig.fontFamily}`;
 
-if (currentConfig.artistName) {
-    drawTextWithLetterSpacing(ctx, currentConfig.artistName, sigX, sigY, letterSpacingPx);
-}
+                const letterSpacingPx = currentConfig.letterSpacing;
+                
+                if (currentConfig.artistName) {
+                    drawTextWithLetterSpacing(ctx, currentConfig.artistName, sigX, sigY, letterSpacingPx);
+                }
 
-if (currentConfig.websiteUrl) {
-    const urlY = currentConfig.artistName ? sigY + currentConfig.fontSize + 10 : sigY;
-    drawTextWithLetterSpacing(ctx, currentConfig.websiteUrl, sigX, urlY, letterSpacingPx);
-}
+                if (currentConfig.websiteUrl) {
+                    const urlY = currentConfig.artistName ? sigY + currentConfig.fontSize + 30 : sigY;
+                    drawTextWithLetterSpacing(ctx, currentConfig.websiteUrl, sigX, urlY, letterSpacingPx);
+                }
+            }
 
             // Check for warnings
             checkWarnings(frameW, matW);
         }
 
-function drawTextWithLetterSpacing(ctx, text, x, y, spacing) {
-    const chars = text.split('');
-    
-    // Calculate total width (don't add spacing to spaces)
-    const totalWidth = chars.reduce((sum, char) => {
-        const charWidth = ctx.measureText(char).width;
-        const extraSpace = char === ' ' ? 0 : spacing; // No extra spacing for spaces
-        return sum + charWidth + extraSpace;
-    }, -spacing);
-    
-    let currentX = x - totalWidth / 2;
-    
-    chars.forEach(char => {
-        ctx.fillText(char, currentX, y);
-        const charWidth = ctx.measureText(char).width;
-        const extraSpace = char === ' ' ? 0 : spacing; // No extra spacing for spaces
-        currentX += charWidth + extraSpace;
-    });
-}
+        function drawTextWithLetterSpacing(ctx, text, x, y, spacing) {
+            const chars = text.split('');
+            const totalWidth = chars.reduce((sum, char) => {
+                return sum + ctx.measureText(char).width + spacing;
+            }, -spacing);
+            
+            let currentX = x - totalWidth / 2;
+            
+            chars.forEach(char => {
+                ctx.fillText(char, currentX, y);
+                currentX += ctx.measureText(char).width + spacing;
+            });
+        }
 
         function checkWarnings(frameW, matW) {
             const warnings = [];
