@@ -1077,15 +1077,6 @@ if (currentConfig.websiteUrl) {
     drawTextWithLetterSpacing(ctx, currentConfig.websiteUrl, sigX, urlY, letterSpacingPx);
 }
 
-if (currentConfig.artistName) {
-    ctx.fillText(currentConfig.artistName, sigX, sigY);
-}
-
-if (currentConfig.websiteUrl) {
-    const urlY = currentConfig.artistName ? sigY + currentConfig.fontSize + 10 : sigY;
-    ctx.fillText(currentConfig.websiteUrl, sigX, urlY);
-}
-
             // Check for warnings
             checkWarnings(frameW, matW);
         }
