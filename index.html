@@ -576,15 +576,6 @@
                                         <span class="slider-value" id="fontSizeValue">30</span>
                                     </div>
                                 </div>
-                                <div class="form-row">
-                                    <label>Letter Spacing</label>
-                                    <div class="slider-row">
-                                        <div class="slider-wrapper">
-                                            <input type="range" id="letterSpacing" min="0" max="30" value="2" step="1">
-                                        </div>
-                                        <span class="slider-value" id="letterSpacingValue">2</span>
-                                    </div>
-                                </div>
                             </div>
                         </div>
                     </div>
@@ -642,8 +633,7 @@
             artistName: '',
             websiteUrl: '',
             fontFamily: "'Georgia', serif",
-            fontSize: 18,
-            letterSpacing: 2,
+            fontSize: 30,
             textColor: '#5a4a3a'
         };
 
@@ -777,12 +767,6 @@
         document.getElementById('fontSize').addEventListener('input', (e) => {
             currentConfig.fontSize = parseInt(e.target.value);
             document.getElementById('fontSizeValue').textContent = e.target.value;
-            renderPreview();
-        });
-
-        document.getElementById('letterSpacing').addEventListener('input', (e) => {
-            currentConfig.letterSpacing = parseFloat(e.target.value);
-            document.getElementById('letterSpacingValue').textContent = e.target.value;
             renderPreview();
         });
 
@@ -1066,17 +1050,6 @@ ctx.fillRect(matX, matY, 20, matHeight);
                 ctx.fillStyle = currentConfig.textColor;
                 ctx.textAlign = 'center';
                 ctx.font = `${currentConfig.fontSize}px ${currentConfig.fontFamily}`;
-
-                const letterSpacingPx = currentConfig.letterSpacing;
-                
-                if (currentConfig.artistName) {
-                    drawTextWithLetterSpacing(ctx, currentConfig.artistName, sigX, sigY, letterSpacingPx);
-                }
-
-                if (currentConfig.websiteUrl) {
-                    const urlY = currentConfig.artistName ? sigY + currentConfig.fontSize + 30 : sigY;
-                    drawTextWithLetterSpacing(ctx, currentConfig.websiteUrl, sigX, urlY, letterSpacingPx);
-                }
             }
 
             // Check for warnings
