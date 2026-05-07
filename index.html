@@ -1029,6 +1029,25 @@
                 frameWidth - frameW * 2,
                 frameHeight - frameW * 2
             );
+// Add inner shadow on mat (top and left edges)
+const matX = frameX + frameW;
+const matY = frameY + frameW;
+const matWidth = frameWidth - frameW * 2;
+const matHeight = frameHeight - frameW * 2;
+
+// Create gradient shadow on top edge
+const topGradient = ctx.createLinearGradient(matX, matY, matX, matY + 20);
+topGradient.addColorStop(0, 'rgba(0, 0, 0, 0.3)');
+topGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+ctx.fillStyle = topGradient;
+ctx.fillRect(matX, matY, matWidth, 20);
+
+// Create gradient shadow on left edge
+const leftGradient = ctx.createLinearGradient(matX, matY, matX + 20, matY);
+leftGradient.addColorStop(0, 'rgba(0, 0, 0, 0.3)');
+leftGradient.addColorStop(1, 'rgba(0, 0, 0, 0)');
+ctx.fillStyle = leftGradient;
+ctx.fillRect(matX, matY, 20, matHeight);
 
             // Draw image
             ctx.drawImage(
